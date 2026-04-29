@@ -2,12 +2,12 @@
 # Usage: ./scripts/claude-ralph/loop.sh refactor-use-view-items-animations
 
 TASK="${1}"
-export PRD="docs/prd/${TASK}.md"
-export ISSUES_DIR="docs/issues/${TASK}"
-export PROGRESS="docs/progress/${TASK}.txt"
+export PRD=".scratch/${TASK}/PRD.md"
+export ISSUES_DIR=".scratch/${TASK}/issues"
+export PROGRESS=".scratch/${TASK}/progress.txt"
 PROMPT="scripts/claude-ralph/prompt.md"
 
-mkdir -p docs/progress
+mkdir -p ".scratch/${TASK}"
 touch "${PROGRESS}"
 
 PROMPT_TEXT=$(envsubst < "${PROMPT}")
