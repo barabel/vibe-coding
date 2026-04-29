@@ -1,6 +1,6 @@
 # vibe-coding
 
-Скиллы и скрипты для Claude Code.
+Скиллы и скрипты для Claude Code. Вдохновленно [Matt Pocock](https://github.com/mattpocock/skills) и [snarktank/ralp](https://github.com/snarktank/ralph)
 
 ## Установка
 
