@@ -39,14 +39,17 @@ DONE
 
 This marker is used to determine completion on the next iteration.
 
+The learnings section is critical - it helps future iterations avoid repeating mistakes and understand the codebase better.
+
 ## Consolidate Patterns
 
-If you discover a **reusable pattern**, add it to the `## Codebase Patterns` section at the TOP of `${PROGRESS}` (create it if it doesn't exist):
+If you discover a **reusable pattern**, add it to the `## Codebase Patterns` section at the TOP of `${PROGRESS}` (create it if it doesn't exist). This section should consolidate the most important learnings::
 
 ```
 ## Codebase Patterns
-- Example: Use X for Y
-- Example: Always update Z when changing W
+- Example: Use `sql<number>` template for aggregations
+- Example: Always use `IF NOT EXISTS` for migrations
+- Example: Export types from actions.ts for UI components
 ```
 
 Only add patterns that are **general and reusable**, not issue-specific details.
@@ -55,20 +58,27 @@ Only add patterns that are **general and reusable**, not issue-specific details.
 
 Before committing, check if any edited files have learnings worth preserving in nearby CLAUDE.md files:
 
-1. Identify directories with edited files
-2. Check for existing CLAUDE.md in those directories or parent directories
-3. Add valuable learnings — API patterns, gotchas, non-obvious dependencies
+1. **Identify directories with edited files** - Look at which directories you modified
+2. **Check for existing CLAUDE.md** - Look for CLAUDE.md in those directories or parent directories
+3. **Add valuable learnings** - If you discovered something future developers/agents should know:
+   - API patterns or conventions specific to that module
+   - Gotchas or non-obvious requirements
+   - Dependencies between files
+   - Testing approaches for that area
+   - Configuration or environment requirements
 
-**Good additions:**
+**Examples of good CLAUDE.md additions:**
 - "When modifying X, also update Y to keep them in sync"
-- "This module uses pattern Z"
+- "This module uses pattern Z for all API calls"
+- "Tests require the dev server running on PORT 3000"
+- "Field names must match the template exactly"
 
 **Do NOT add:**
 - Issue-specific details
 - Temporary debugging notes
 - Information already in the progress file
 
-Only update CLAUDE.md if you have **genuinely reusable knowledge**.
+Only update CLAUDE.md if you have **genuinely reusable knowledge** that would help future work in that directory.
 
 ## Commit Rules
 
@@ -96,5 +106,5 @@ After completing ONE issue:
 ## Important
 
 - Work on ONE issue per iteration — stop after committing and updating progress
-- Read Codebase Patterns in the progress file before starting
+- Read the Codebase Patterns section in `${PROGRESS}` before starting
 - The PRD and progress file contents are already loaded in context above
