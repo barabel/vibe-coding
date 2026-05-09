@@ -1,20 +1,36 @@
 #!/bin/bash
-# Usage: ./scripts/claude-ralph/auto.sh <task> [max_iterations]
+# Usage: ./scripts/claude-ralph/auto.sh <task> [max_iterations] [--tdd]
 
 set -e
 
-TASK="${1}"
-MAX_ITERATIONS="${2:-10}"
+TASK=""
+MAX_ITERATIONS=10
+USE_TDD=false
+
+for arg in "$@"; do
+  case "$arg" in
+    --tdd) USE_TDD=true ;;
+    *)
+      if [ -z "$TASK" ]; then TASK="$arg"
+      else MAX_ITERATIONS="$arg"
+      fi
+      ;;
+  esac
+done
 
 if [ -z "$TASK" ]; then
-  echo "Usage: $0 <task> [max_iterations]"
+  echo "Usage: $0 <task> [max_iterations] [--tdd]"
   exit 1
 fi
 
 export PRD=".scratch/${TASK}/PRD.md"
 export ISSUES_DIR=".scratch/${TASK}/issues"
 export PROGRESS=".scratch/${TASK}/progress.txt"
-PROMPT="scripts/claude-ralph/auto-prompt.md"
+if [ "$USE_TDD" = true ]; then
+  PROMPT="scripts/claude-ralph/auto-prompt-tdd.md"
+else
+  PROMPT="scripts/claude-ralph/auto-prompt.md"
+fi
 
 mkdir -p ".scratch/${TASK}"
 touch "${PROGRESS}"
