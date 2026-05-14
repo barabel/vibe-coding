@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: ./scripts/claude-ralph/loop.sh refactor-use-view-items-animations [--bp]
+# Usage: ./scripts/claude-ralph/loop-tdd.sh refactor-use-view-items-animations [--bp]
 
 TASK=""
 PERMISSION_FLAG="--permission-mode acceptEdits"
@@ -14,7 +14,7 @@ done
 export PRD=".scratch/${TASK}/PRD.md"
 export ISSUES_DIR=".scratch/${TASK}/issues"
 export PROGRESS=".scratch/${TASK}/progress.txt"
-PROMPT="scripts/claude-ralph/prompt.md"
+PROMPT="scripts/claude-ralph/prompt-tdd.md"
 
 mkdir -p ".scratch/${TASK}"
 touch "${PROGRESS}"

@@ -1,4 +1,4 @@
-# Ralph Agent Instructions
+# Ralph TDD Agent Instructions
 
 You are an autonomous coding agent working on a software project.
 
@@ -8,7 +8,8 @@ You are an autonomous coding agent working on a software project.
 2. Check the **Codebase Patterns** section in the progress file before doing anything.
 3. Find the next incomplete issue in `${ISSUES_DIR}/` — an issue is incomplete if its file does NOT contain a `DONE` marker at the bottom (see **Mark Issue as Done** below).
 4. Read that issue file using your tools.
-5. Implement it.
+5. Invoke the `/tdd` skill to implement it.
+   **SKIP the Planning step entirely** — do NOT ask the user for confirmation, do NOT wait for approval. The issue file IS the specification. Go straight to the Tracer Bullet step.
 6. Run quality checks (typecheck, lint — use whatever this project requires).
 7. Update CLAUDE.md files if you discover reusable patterns (see below).
 8. If checks pass, commit all implementation changes (excluding the progress and issue files) with message: `feat: [issue-filename] - [issue title]`
