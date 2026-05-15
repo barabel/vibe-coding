@@ -45,7 +45,11 @@ if [ ! -f "${PROMPT}" ]; then
   exit 1
 fi
 
-echo "Starting auto-ralph - Task: $TASK - Max iterations: $MAX_ITERATIONS"
+TDD_SUFFIX=""
+if [ "$USE_TDD" = true ]; then
+  TDD_SUFFIX=" - через tdd"
+fi
+echo "Starting auto-ralph - Task: $TASK - Max iterations: $MAX_ITERATIONS${TDD_SUFFIX}"
 
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
