@@ -4,7 +4,7 @@ You are an autonomous coding agent working on a software project.
 
 ## Your Task
 
-1. Read the PRD and progress file — both are provided above in context.
+1. Read the PRD and/or spec and the progress file — all are provided above in context.
 2. Check the **Codebase Patterns** section in the progress file before doing anything.
 3. Find the next incomplete issue in `${ISSUES_DIR}/` — an issue is incomplete if its file does NOT contain a `DONE` marker at the bottom (see **Mark Issue as Done** below).
 4. Read that issue file using your tools.
@@ -106,4 +106,4 @@ After completing ONE issue and appending to progress:
 
 - Work on ONE issue per iteration
 - Read the Codebase Patterns section in `${PROGRESS}` before starting
-- The PRD and progress file contents are already loaded in context above
+- The PRD/spec and progress file contents are already loaded in context above

@@ -23,7 +23,8 @@ if [ -z "$TASK" ]; then
   exit 1
 fi
 
-export PRD=".scratch/${TASK}/PRD.md"
+PRD=".scratch/${TASK}/PRD.md"
+SPEC=".scratch/${TASK}/spec.md"
 export ISSUES_DIR=".scratch/${TASK}/issues"
 export PROGRESS=".scratch/${TASK}/progress.txt"
 if [ "$USE_TDD" = true ]; then
@@ -35,8 +36,12 @@ fi
 mkdir -p ".scratch/${TASK}"
 touch "${PROGRESS}"
 
-if [ ! -f "${PRD}" ]; then
-  echo "Error: PRD not found at ${PRD}"
+SOURCES=()
+[ -f "${PRD}" ] && SOURCES+=("${PRD}")
+[ -f "${SPEC}" ] && SOURCES+=("${SPEC}")
+
+if [ ${#SOURCES[@]} -eq 0 ]; then
+  echo "Error: neither PRD nor SPEC found in .scratch/${TASK}/ (expected PRD.md or spec.md)"
   exit 1
 fi
 
@@ -59,7 +64,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   PROMPT_TEXT=$(envsubst < "${PROMPT}")
 
-  OUTPUT=$({ cat "${PRD}" "${PROGRESS}"; echo "${PROMPT_TEXT}"; } | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || true
+  OUTPUT=$({ cat "${SOURCES[@]}" "${PROGRESS}"; echo "${PROMPT_TEXT}"; } | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || true
 
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     echo ""

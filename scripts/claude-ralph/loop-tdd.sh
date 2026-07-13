@@ -11,7 +11,8 @@ for arg in "$@"; do
   esac
 done
 
-export PRD=".scratch/${TASK}/PRD.md"
+PRD=".scratch/${TASK}/PRD.md"
+SPEC=".scratch/${TASK}/spec.md"
 export ISSUES_DIR=".scratch/${TASK}/issues"
 export PROGRESS=".scratch/${TASK}/progress.txt"
 PROMPT="scripts/claude-ralph/prompt-tdd.md"
@@ -19,6 +20,15 @@ PROMPT="scripts/claude-ralph/prompt-tdd.md"
 mkdir -p ".scratch/${TASK}"
 touch "${PROGRESS}"
 
+FILE_REFS=""
+[ -f "${PRD}" ] && FILE_REFS="${FILE_REFS} @${PRD}"
+[ -f "${SPEC}" ] && FILE_REFS="${FILE_REFS} @${SPEC}"
+
+if [ -z "${FILE_REFS}" ]; then
+  echo "Error: neither PRD nor SPEC found in .scratch/${TASK}/ (expected PRD.md or spec.md)"
+  exit 1
+fi
+
 PROMPT_TEXT=$(envsubst < "${PROMPT}")
 
-claude $PERMISSION_FLAG "@${PRD} @${PROGRESS} ${PROMPT_TEXT}"
+claude $PERMISSION_FLAG "${FILE_REFS} @${PROGRESS} ${PROMPT_TEXT}"
