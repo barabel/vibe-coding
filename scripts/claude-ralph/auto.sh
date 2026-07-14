@@ -6,10 +6,12 @@ set -e
 TASK=""
 MAX_ITERATIONS=10
 USE_TDD=false
+MODEL=""
 
 for arg in "$@"; do
   case "$arg" in
     --tdd) USE_TDD=true ;;
+    --sonnet) MODEL="--model sonnet" ;;
     *)
       if [ -z "$TASK" ]; then TASK="$arg"
       else MAX_ITERATIONS="$arg"
@@ -64,7 +66,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   PROMPT_TEXT=$(envsubst < "${PROMPT}")
 
-  OUTPUT=$({ cat "${SOURCES[@]}" "${PROGRESS}"; echo "${PROMPT_TEXT}"; } | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || true
+  OUTPUT=$({ cat "${SOURCES[@]}" "${PROGRESS}"; echo "${PROMPT_TEXT}"; } | claude --dangerously-skip-permissions $MODEL --print 2>&1 | tee /dev/stderr) || true
 
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     echo ""

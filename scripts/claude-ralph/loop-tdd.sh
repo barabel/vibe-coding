@@ -3,10 +3,12 @@
 
 TASK=""
 PERMISSION_FLAG="--permission-mode acceptEdits"
+MODEL=""
 
 for arg in "$@"; do
   case "$arg" in
     --bp) PERMISSION_FLAG="--dangerously-skip-permissions" ;;
+    --sonnet) MODEL="--model sonnet" ;;
     *) if [ -z "$TASK" ]; then TASK="$arg"; fi ;;
   esac
 done
@@ -31,4 +33,4 @@ fi
 
 PROMPT_TEXT=$(envsubst < "${PROMPT}")
 
-claude $PERMISSION_FLAG "${FILE_REFS} @${PROGRESS} ${PROMPT_TEXT}"
+claude $PERMISSION_FLAG $MODEL "${FILE_REFS} @${PROGRESS} ${PROMPT_TEXT}"
