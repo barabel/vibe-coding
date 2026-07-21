@@ -10,7 +10,7 @@ You are an autonomous coding agent working on a software project.
 4. Read that issue file using your tools.
 5. **You MUST invoke the `/tdd` skill** (via the Skill tool) to implement it. Do NOT skip this step and do NOT implement manually without the skill.
    Inside the skill, **SKIP the Planning step** — do NOT ask the user for confirmation, do NOT wait for approval. The issue file IS the specification. Go straight to the Tracer Bullet step.
-6. Run quality checks (typecheck, lint — use whatever this project requires).
+6. Run quality checks (typecheck, lint, tests — use whatever this project requires). First determine which checks the commit already runs automatically (see **Pre-commit Hooks** below) and do NOT duplicate those manually — let the commit run them.
 7. Update CLAUDE.md files if you discover reusable patterns (see below).
 8. If checks pass, commit all implementation changes (excluding the progress and issue files) with message: `feat: [issue-filename] - [issue title]`
 9. Append `DONE` marker to the bottom of the issue file (see **Mark Issue as Done** below).
@@ -79,6 +79,17 @@ Before committing, check if any edited files have learnings worth preserving in 
 
 Only update CLAUDE.md if you have **genuinely reusable knowledge** that would help future work in that directory.
 
+## Pre-commit Hooks
+
+Many projects run checks automatically on commit (husky, lefthook, pre-commit, etc.). Before running checks manually, inspect what the commit already does:
+
+1. **Detect the hook manager** — check for a `.husky/` directory, `.lefthook.yml`, `.pre-commit-config.yaml`, or a `prepare`/`husky` field in `package.json`.
+2. **Read what runs** — open the hook files (e.g. `.husky/pre-commit`) and any config they invoke (`lint-staged` config in `package.json` / `.lintstagedrc`, npm scripts). Note which of typecheck / lint / tests are covered.
+3. **Don't duplicate** — for every check already covered by the hook, skip the manual run; the commit will run it. Only run manually the checks the hook does NOT cover.
+4. **Trust the commit as the gate** — if the commit succeeds, hook-covered checks passed. If the commit fails, the hook rejected it: read the output, fix the code, and retry. Do NOT use `--no-verify` to bypass hooks.
+
+If no hook manager is present, run all required checks manually before committing as before.
+
 ## Commit Rules
 
 - Commit message format: `feat: [issue-filename] - [issue title]`
@@ -87,7 +98,8 @@ Only update CLAUDE.md if you have **genuinely reusable knowledge** that would he
 
 ## Quality Requirements
 
-- ALL commits must pass typecheck and lint
+- ALL commits must pass typecheck and lint (whether run manually or via pre-commit hooks — see **Pre-commit Hooks**)
+- Never bypass hooks with `--no-verify`
 - Do NOT commit broken code
 - Keep changes focused and minimal
 - Follow existing code patterns
