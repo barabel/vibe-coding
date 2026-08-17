@@ -71,5 +71,4 @@ codex \
   --sandbox workspace-write \
   --ask-for-approval "${APPROVAL_POLICY}" \
   "${MODEL_ARGS[@]}" \
-  exec \
   "${PROMPT_INPUT}"
