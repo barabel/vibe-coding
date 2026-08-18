@@ -78,13 +78,10 @@ RALPH_CAPTURE="${TEST_DIR}/codex-flags.args" \
   PATH="${TEST_DIR}/bin:${PATH}" \
   bash scripts/ralph/loop-implement-codex.sh --bp --terra demo
 mapfile -d '' -t ARGS < "${TEST_DIR}/codex-flags.args"
-assert_eq "--sandbox" "${ARGS[0]}"
-assert_eq "workspace-write" "${ARGS[1]}"
-assert_eq "--ask-for-approval" "${ARGS[2]}"
-assert_eq "never" "${ARGS[3]}"
-assert_eq "--model" "${ARGS[4]}"
-assert_eq "gpt-5.6-terra" "${ARGS[5]}"
-assert_contains "${ARGS[6]}" '$implement'
+assert_eq "--dangerously-bypass-approvals-and-sandbox" "${ARGS[0]}"
+assert_eq "--model" "${ARGS[1]}"
+assert_eq "gpt-5.6-terra" "${ARGS[2]}"
+assert_contains "${ARGS[3]}" '$implement'
 
 if bash scripts/ralph/loop-implement-claude.sh >/dev/null 2>&1; then
   fail "Claude launcher accepted an empty task"

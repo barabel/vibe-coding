@@ -4,12 +4,12 @@
 set -e
 
 TASK=""
-APPROVAL_POLICY="on-request"
+PERMISSION_ARGS=(--sandbox workspace-write --ask-for-approval on-request)
 MODEL_ARGS=()
 
 for arg in "$@"; do
   case "$arg" in
-    --bp) APPROVAL_POLICY="never" ;;
+    --bp) PERMISSION_ARGS=(--dangerously-bypass-approvals-and-sandbox) ;;
     --terra) MODEL_ARGS=(--model gpt-5.6-terra) ;;
     --*)
       echo "Error: unknown option: $arg"
@@ -68,7 +68,6 @@ PROMPT_INPUT+=$'\n\n'
 PROMPT_INPUT+="${PROMPT_TEXT}"
 
 codex \
-  --sandbox workspace-write \
-  --ask-for-approval "${APPROVAL_POLICY}" \
+  "${PERMISSION_ARGS[@]}" \
   "${MODEL_ARGS[@]}" \
   "${PROMPT_INPUT}"
