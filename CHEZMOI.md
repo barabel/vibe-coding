@@ -6,7 +6,7 @@
 - Локальное хранилище: `C:\project-support`.
 - Удалённое хранилище: отдельный репозиторий `project-support` на доступном с обеих машин Git-сервере.
 
-Редактируешь файлы в проектах. `add` / `re-add` копируют изменения в локальное хранилище. Git отправляет их на сервер. `update` скачивает изменения и применяет их к проектам.
+Редактируешь файлы в проектах. `add` / `re-add` копируют изменения в локальное хранилище, автоматически создают Git-коммит и отправляют его на сервер. `update` скачивает изменения и применяет их к проектам.
 
 ## Ежедневная памятка
 
@@ -16,9 +16,6 @@
 
 ```powershell
 chezmoi re-add
-git -C C:/project-support add .
-git -C C:/project-support commit -m "Обновить файлы проектов"
-git -C C:/project-support push
 ```
 
 ### Пришёл на работу
@@ -33,9 +30,6 @@ chezmoi update
 
 ```powershell
 chezmoi re-add
-git -C C:/project-support add .
-git -C C:/project-support commit -m "Обновить файлы проектов"
-git -C C:/project-support push
 ```
 
 ### Пришёл домой
@@ -59,7 +53,7 @@ chezmoi diff
 chezmoi apply
 ```
 
-Если изменений нет, Git может ответить `nothing to commit` — это нормально. При ошибке команды сначала разберись с ней, затем продолжай. Если уже редактировал файлы до получения обновлений, сначала сохрани их через `add` / `re-add` и локальный commit, затем получай обновления и разрешай возможные Git-конфликты в хранилище.
+Если изменений нет, `re-add` не создаст коммит — это нормально. При ошибке команды сначала разберись с ней, затем продолжай. Если уже редактировал файлы до получения обновлений, сначала сохрани их через `add` / `re-add`: коммит и push выполнятся автоматически. Затем получай обновления и разрешай возможные Git-конфликты в хранилище.
 
 [Документация re-add](https://www.chezmoi.io/reference/commands/re-add/), [update](https://www.chezmoi.io/reference/commands/update/).
 
@@ -96,10 +90,14 @@ notepad "$env:USERPROFILE\.config\chezmoi\chezmoi.toml"
 
 ```toml
 sourceDir = "C:/project-support"
-destDir = "C:/_coding"
+destDir = "C:/"
+
+[git]
+autoCommit = true
+autoPush = true
 ```
 
-Это настройка для новой установки chezmoi со стандартным расположением конфига. `sourceDir` — хранилище; `destDir` — корень проектов. На другой машине корень может отличаться, например `D:/projects`, но относительные пути проектов должны совпадать: `nazare-front/docs` и т. п.
+Это настройка для новой установки chezmoi со стандартным расположением конфига. `sourceDir` — хранилище; `destDir` — корень диска, поэтому пути проектов в хранилище начинаются с `_coding/`. `git.autoCommit` создаёт коммит с автоматически сгенерированным сообщением после изменений через `add`, `re-add`, `forget` и другие команды chezmoi. `git.autoPush` сразу отправляет этот коммит в удалённый репозиторий.
 
 [Конфигурационный файл](https://www.chezmoi.io/reference/configuration-file/), [параметры путей](https://www.chezmoi.io/reference/configuration-file/variables/).
 
@@ -107,10 +105,13 @@ destDir = "C:/_coding"
 
 Создай пустой удалённый репозиторий `project-support`, без README и других начальных файлов. В командах ниже замени `URL_РЕПОЗИТОРИЯ` его SSH- или HTTPS-адресом.
 
-После установки и настройки конфига:
+После установки и настройки конфига инициализируй хранилище. Пустой коммит нужен один раз, чтобы настроить upstream до первого автоматического push:
 
 ```powershell
 chezmoi init
+git -C C:/project-support remote add origin "URL_РЕПОЗИТОРИЯ"
+git -C C:/project-support commit --allow-empty -m "Инициализировать хранилище"
+git -C C:/project-support push -u origin HEAD
 ```
 
 Добавь выбранные файлы первого проекта:
@@ -122,22 +123,13 @@ chezmoi add ./docs ./scripts ./.scratch ./CLAUDE.md ./CONTEXT.md
 
 Перечисляй только существующие и нужные пути. Если нужна лишь часть `scripts`, укажи конкретные подпапки. `AGENTS.md`, `.agents` или `agents` добавляются так же, если есть в проекте. **Не выполняй `chezmoi add .` в корне проекта: он выберет весь проект.**
 
-Подключи удалённый репозиторий и посмотри содержимое первого коммита:
+`chezmoi add` автоматически создаст и отправит коммит. Посмотри его содержимое:
 
 ```powershell
-git -C C:/project-support remote add origin "URL_РЕПОЗИТОРИЯ"
-git -C C:/project-support add .
-git -C C:/project-support diff --cached
+git -C C:/project-support show --stat
 ```
 
-После просмотра:
-
-```powershell
-git -C C:/project-support commit -m "Добавить файлы проектов"
-git -C C:/project-support push -u origin HEAD
-```
-
-Успешный push означает, что файлы доступны для второй машины. Эти Git-команды работают с `project-support`, а не с репозиториями проектов.
+Успешный автоматический push означает, что файлы доступны для второй машины. Эти Git-команды работают с `project-support`, а не с репозиториями проектов.
 
 [Документация init](https://www.chezmoi.io/reference/commands/init/), [add](https://www.chezmoi.io/reference/commands/add/).
 
@@ -173,16 +165,16 @@ chezmoi add C:/_coding/another-project/docs
 chezmoi add C:/_coding/another-project/CLAUDE.md
 ```
 
-После этого — обычные commit и push хранилища. На второй машине — `chezmoi update`.
+После этого chezmoi автоматически создаст и отправит коммит. На второй машине — `chezmoi update`.
 
-Хранилище будет содержать отдельные папки проектов. Каталоги с точкой имеют специальное представление: `.scratch` хранится как `dot_scratch`, но в проекте после применения снова получается `.scratch`. [Правила имён](https://www.chezmoi.io/reference/source-state-attributes/).
+Хранилище будет содержать каталог `_coding` с отдельными папками проектов. Каталоги с точкой имеют специальное представление: `.scratch` хранится как `dot_scratch`, но в проекте после применения снова получается `.scratch`. [Правила имён](https://www.chezmoi.io/reference/source-state-attributes/).
 
 ## Удаления и исключения Git
 
 Простое удаление файла в проекте не переносится этим циклом автоматически. Чтобы удалить конкретный файл на обеих машинах:
 
 1. Выполни `chezmoi forget C:/_coding/nazare-front/docs/old.md`, подставив нужный файл.
-2. Добавь строку `nazare-front/docs/old.md` в `C:/project-support/.chezmoiremove`.
+2. Добавь строку `_coding/nazare-front/docs/old.md` в `C:/project-support/.chezmoiremove`.
 3. Выполни `chezmoi diff`, затем `chezmoi apply`.
 4. Закоммить и отправь изменения хранилища. На другой машине выполни `chezmoi update`.
 
