@@ -53,6 +53,8 @@ assert_eq "--permission-mode" "${ARGS[0]}"
 assert_eq "acceptEdits" "${ARGS[1]}"
 assert_contains "${ARGS[2]}" "/implement @.scratch/demo/PRD.md"
 assert_contains "${ARGS[2]}" '.scratch/demo/issues'
+assert_contains "${ARGS[2]}" 'subagent_type: code-reviewer'
+assert_contains "${ARGS[2]}" 'Сабагентов code-review'
 
 RALPH_CAPTURE="${TEST_DIR}/claude-flags.args" \
   PATH="${TEST_DIR}/bin:${PATH}" \
@@ -73,6 +75,8 @@ assert_eq "on-request" "${ARGS[3]}"
 assert_contains "${ARGS[4]}" '$implement'
 assert_contains "${ARGS[4]}" '.scratch/demo/PRD.md'
 assert_contains "${ARGS[4]}" '.scratch/demo/issues'
+assert_contains "${ARGS[4]}" 'gpt-5.6-sol'
+assert_contains "${ARGS[4]}" 'Оба субагента'
 
 RALPH_CAPTURE="${TEST_DIR}/codex-flags.args" \
   PATH="${TEST_DIR}/bin:${PATH}" \

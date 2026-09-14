@@ -9,6 +9,10 @@
 3. Реализуй по правилам скилла implement (tdd где уместно, typecheck и тесты, code-review, коммит в текущую ветку).
 4. Пометь issue как done (см. ниже).
 
+## Code review
+
+- ${CODE_REVIEW}
+
 ## Коммиты
 
 - Формат сообщения: `feat: [issue-filename] - [issue title]`

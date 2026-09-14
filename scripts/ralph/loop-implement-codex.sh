@@ -35,6 +35,7 @@ PRD=".scratch/${TASK}/PRD.md"
 SPEC=".scratch/${TASK}/spec.md"
 export ISSUES_DIR=".scratch/${TASK}/issues"
 PROMPT="scripts/ralph/prompt-implement.md"
+export CODE_REVIEW='Вызови `$code-review`. Оба субагента (Standards и Spec) запусти с `model: gpt-5.6-sol`, `reasoning_effort: high` и `fork_turns: none`.'
 
 mkdir -p ".scratch/${TASK}"
 
@@ -57,7 +58,10 @@ if [ ! -f "${PROMPT}" ]; then
   exit 1
 fi
 
-PROMPT_TEXT=$(envsubst < "${PROMPT}")
+# envsubst из mingw портит кириллицу в значениях переменных (пишет cp1251)
+PROMPT_TEXT=$(<"${PROMPT}")
+PROMPT_TEXT=${PROMPT_TEXT//'${ISSUES_DIR}'/"${ISSUES_DIR}"}
+PROMPT_TEXT=${PROMPT_TEXT//'${CODE_REVIEW}'/"${CODE_REVIEW}"}
 PROMPT_INPUT='$implement'
 PROMPT_INPUT+=$'\n\nПрочитай контекст задачи в файлах:'
 for source in "${SOURCES[@]}"; do
