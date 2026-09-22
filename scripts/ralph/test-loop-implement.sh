@@ -51,10 +51,15 @@ RALPH_CAPTURE="${TEST_DIR}/claude-default.args" \
 mapfile -d '' -t ARGS < "${TEST_DIR}/claude-default.args"
 assert_eq "--permission-mode" "${ARGS[0]}"
 assert_eq "acceptEdits" "${ARGS[1]}"
-assert_contains "${ARGS[2]}" "/implement @.scratch/demo/PRD.md"
-assert_contains "${ARGS[2]}" '.scratch/demo/issues'
-assert_contains "${ARGS[2]}" 'subagent_type: code-reviewer'
-assert_contains "${ARGS[2]}" 'Сабагентов code-review'
+assert_eq "--agents" "${ARGS[2]}"
+assert_contains "${ARGS[3]}" '"code-reviewer"'
+assert_contains "${ARGS[3]}" '"model":"opus"'
+assert_contains "${ARGS[3]}" '"effort":"high"'
+printf '%s' "${ARGS[3]}" | node -e 'JSON.parse(require("fs").readFileSync(0, "utf8"))' || fail "--agents is not valid JSON"
+assert_contains "${ARGS[4]}" "/implement @.scratch/demo/PRD.md"
+assert_contains "${ARGS[4]}" '.scratch/demo/issues'
+assert_contains "${ARGS[4]}" 'subagent_type: code-reviewer'
+assert_contains "${ARGS[4]}" 'Сабагентов code-review'
 
 RALPH_CAPTURE="${TEST_DIR}/claude-flags.args" \
   PATH="${TEST_DIR}/bin:${PATH}" \

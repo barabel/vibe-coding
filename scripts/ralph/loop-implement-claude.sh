@@ -36,6 +36,8 @@ SPEC=".scratch/${TASK}/spec.md"
 export ISSUES_DIR=".scratch/${TASK}/issues"
 PROMPT="scripts/ralph/prompt-implement.md"
 export CODE_REVIEW='Сабагентов code-review (Standards, Spec) запускать через `subagent_type: code-reviewer` (Opus, high effort). Не использовать general-purpose и не переопределять `model`.'
+# агент code-reviewer задаётся здесь, чтобы не ставить его на каждой машине
+CODE_REVIEWER_AGENT='{"code-reviewer":{"description":"Code reviewer for the code-review skill: reviews a git diff along one axis (Standards or Spec) given in the prompt.","prompt":"You are a senior code reviewer. Follow the brief in the task prompt exactly: review only the given diff along the requested axis, cite the rule or spec line for every finding, and separate hard violations from judgement calls. Do not edit files. Answer in Russian, concisely.","model":"opus","effort":"high"}}'
 
 mkdir -p ".scratch/${TASK}"
 
@@ -68,4 +70,4 @@ for source in "${SOURCES[@]}"; do
 done
 PROMPT_INPUT+=" ${PROMPT_TEXT}"
 
-claude "${PERMISSION_ARGS[@]}" "${MODEL_ARGS[@]}" "${PROMPT_INPUT}"
+claude "${PERMISSION_ARGS[@]}" "${MODEL_ARGS[@]}" --agents "${CODE_REVIEWER_AGENT}" "${PROMPT_INPUT}"
