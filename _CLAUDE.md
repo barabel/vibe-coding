@@ -93,6 +93,23 @@ export const twClassesSize = (size: ButtonSize, hasIcon: boolean): string => {
 
 - отвечать на русском. Если не можешь — на английском. Технические термины и идентификаторы кода — в оригинале
 
+## Внешние сервисы (токены в env)
+
+Значения токенов не выводить в чат, коммиты, файлы. Читать через `curl`, не WebFetch (там логин).
+
+### Bitrix24 (crm.idem.agency)
+
+- env `BITRIX_WEBHOOK` — входящий вебхук (права task, disk), со `/` на конце
+- ссылка на задачу Bitrix или «задача N» → читать через REST; номер часто в имени ветки: `task_27630` → 27630
+- задача: `curl -s "${BITRIX_WEBHOOK}tasks.task.get?taskId=N"` (описание в `result.task.description`, BBCode)
+- комментарии: `curl -s "${BITRIX_WEBHOOK}task.commentitem.getlist?TASKID=N"`
+
+### GitLab (gitlab.idem.agency)
+
+- env `GITLAB_TOKEN` — personal access token, для чтения GitLab (MR, issues, pipelines); `glab` не установлен
+- API: `curl -s -H "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.idem.agency/api/v4/..."`
+- проект — URL-encoded путь: `projects/idem-project%2Fcongress/merge_requests?state=opened`
+
 ## Принципы разработки
 
 ### 1. Думай перед кодом
