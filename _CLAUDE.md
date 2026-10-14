@@ -106,7 +106,7 @@ export const twClassesSize = (size: ButtonSize, hasIcon: boolean): string => {
 
 ### GitLab (gitlab.idem.agency)
 
-- env `GITLAB_TOKEN` — personal access token, для чтения GitLab (MR, issues, pipelines); `glab` не установлен
+- env `GITLAB_TOKEN` — personal access token, полный доступ (чтение и запись: MR, комментарии, issues, pipelines); `glab` не установлен
 - API: `curl -s -H "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.idem.agency/api/v4/..."`
 - проект — URL-encoded путь: `projects/idem-project%2Fcongress/merge_requests?state=opened`
 
