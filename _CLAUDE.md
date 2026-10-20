@@ -94,6 +94,12 @@ export const twClassesSize = (size: ButtonSize, hasIcon: boolean): string => {
 
 Значения токенов не выводить в чат, коммиты, файлы. Читать через `curl`, не WebFetch (там логин).
 
+**Кириллица в POST/PUT** (заголовки MR, комментарии, описания) — никогда не передавать аргументами curl (`--data-urlencode "title=Привет"`, `-d '{"body":"…"}'`): на Windows shell портит кодировку, API отвечает `400 Bad Request`. Сразу так:
+1. собрать payload в JSON-файл через node (пишет UTF-8): `node -e "fs.writeFileSync('p.json', JSON.stringify({title: '…', body: fs.readFileSync('text.md','utf8')}))"`; длинный текст — отдельным `.md` через Write
+2. отправить файлом: `curl -s -H "Content-Type: application/json" -X POST "<url>" --data-binary "@p.json"`
+
+Файлы payload — в scratchpad.
+
 ### Bitrix24 (crm.idem.agency)
 
 - env `BITRIX_WEBHOOK` — входящий вебхук (права task, disk), со `/` на конце
