@@ -1,14 +1,14 @@
 // Ink bounding boxes per sub-region, mockup vs screenshot (block coordinates).
 //
 // node measure.mjs --actual out/about-1440.png --mockup mockups/about-1440.png --crop 64,64,1312,540 \
-//   --regions "title:0,30,880,125;photo:870,0,1312,415"
+//   --regions "title:0,30,880,95;photo:870,0,442,415"
 //
 // Flags:
 //   --actual FILE       screenshot
 //   --mockup FILE       mockup (transparent areas are flattened onto --bg)
 //   --crop x,y,w,h      block area in mockup coordinates (default: whole mockup)
 //   --at x,y            top-left of the same area in the screenshot (default: crop x,y)
-//   --regions SPEC      "name:x0,y0,x1,y1;..." sub-regions in block coordinates
+//   --regions SPEC      "name:x,y,w,h;..." sub-regions in block coordinates (the format diff.mjs prints regions in)
 //   --ink N             per-channel delta from the region's dominant color that counts as ink (default 30)
 //   --bg #ffffff        page background under the mockup alpha (default white)
 import { parseArgs } from 'node:util';
@@ -89,7 +89,8 @@ const fmt = (r) => {
 
 for (const part of values.regions.split(';')) {
   const [name, rect] = part.split(':');
-  const box = rect.split(',').map(Number);
+  const { x, y, w, h } = parseRect(rect);
+  const box = [x, y, x + w, y + h];
   const rm = bbox(mock, box);
   const ra = bbox(actual, box);
   const delta = rm && ra

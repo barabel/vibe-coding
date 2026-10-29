@@ -176,6 +176,10 @@ const shootOne = async (browser, width) => {
   if (values.click.length) {
     // Park the cursor so the popup has no hover state under the last click point.
     await page.mouse.move(0, 0);
+    // Drop focus so the last clicked control shows no focus ring.
+    await page.evaluate(() => {
+      document.activeElement?.blur();
+    });
   }
   if (values.wait) {
     await page.locator(values.wait).first().waitFor({ state: 'visible', timeout: 15000 });
@@ -202,7 +206,10 @@ const shootOne = async (browser, width) => {
       return { x: r.left, y: r.top, width: r.width, height: r.height };
     }, shotSelector);
     const vp = page.viewportSize();
-    const x = Math.max(0, Math.floor(box.x - pad));
+    if (box.y + box.height + pad > vp.height) {
+      console.warn(`warning: element is cut at the viewport bottom (${vp.height}px); raise --height`);
+    }
+    const x =Math.max(0, Math.floor(box.x - pad));
     const y = Math.max(0, Math.floor(box.y - pad));
     const clip = {
       x,
