@@ -122,6 +122,7 @@ cx(
 - ссылка на задачу Bitrix или «задача N» → читать через REST; номер часто в имени ветки: `task_27630` → 27630
 - задача: `curl -s "${BITRIX_WEBHOOK}tasks.task.get?taskId=N"` (описание в `result.task.description`, BBCode)
 - комментарии: `curl -s "${BITRIX_WEBHOOK}task.commentitem.getlist?TASKID=N"`
+- доступ есть не ко всем задачам: ответ `Task not found or not accessible` — это норма. Продолжай без задачи и одной фразой скажи пользователю, что прочитать её не удалось
 
 ### GitLab (gitlab.idem.agency)
 
